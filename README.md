@@ -98,6 +98,72 @@ npm start
 
 The server will start at `http://localhost:3000`
 
+## 🚀 Deployment
+
+### Environment Configuration
+
+The project supports three environments:
+
+- **test**: For local development (current setup)
+- **development**: For staging/development server deployment  
+- **production**: For production server deployment
+
+### Quick Deployment
+
+#### Using Deployment Script
+```bash
+# Deploy to development environment
+./deploy.sh development
+
+# Deploy to production environment
+./deploy.sh production
+```
+
+#### Manual Deployment
+```bash
+# For development environment
+export NODE_ENV=development
+npm install
+npm run setup:dev
+npm start
+
+# For production environment  
+export NODE_ENV=production
+npm install
+npm run setup:prod
+npm start
+```
+
+#### Available Deployment Commands
+```bash
+# Setup specific environments
+npm run setup:dev      # Setup development database
+npm run setup:prod     # Setup production database
+npm run setup:test     # Setup test database (your current local)
+
+# Database operations
+npm run db:setup       # Create database + run migrations
+npm run db:migrate     # Run pending migrations
+npm run db:reset       # Drop, create, and migrate database
+npm run db:seed        # Run all seeders
+
+# One-command deployment
+npm run deploy:dev     # Setup + start development
+npm run deploy:prod    # Setup + start production
+```
+
+### Environment Variables
+
+Current configuration per environment:
+
+| Environment | Database Name | Username | Password | Host |
+|-------------|---------------|----------|----------|------|
+| test (local) | `users` | `postgres` | `postgres` | `127.0.0.1` |
+| development | `orm_learning_development` | `postgres` | `postgres` | `127.0.0.1` |
+| production | `orm_learning_production` | `postgres` | `postgres` | `127.0.0.1` |
+
+**Note**: Update credentials in `config/config.json` for production deployment with secure passwords.
+
 ## 📚 API Documentation
 
 ### Swagger UI
@@ -215,17 +281,60 @@ To continue learning, try:
    - Ensure database exists
 
 2. **Migration Errors**
-   - Check if `NODE_ENV=test` is set
+   - Check if correct `NODE_ENV` is set
    - Verify migration files are correct
+   - Try running `npm run db:reset` to start fresh
 
 3. **Port Already in Use**
    - Change PORT in `app.js` or kill existing process
+   - Use `lsof -ti:3000 | xargs kill` to kill process on port 3000
+
+4. **Deployment Issues**
+   - Ensure PostgreSQL is running on deployment server
+   - Check file permissions: `chmod +x deploy.sh`
+   - Verify NODE_ENV is set correctly
+
+### Deployment Checklist
+
+Before deploying to production:
+
+- [ ] Update database credentials in `config/config.json`
+- [ ] Set environment variables properly
+- [ ] Ensure PostgreSQL is running on target server
+- [ ] Run database migrations: `npm run db:migrate`
+- [ ] Test API endpoints after deployment
+- [ ] Check logs for any errors
 
 ## 📄 Scripts
 
+### Development Scripts
 ```bash
-npm run dev     # Start development server with nodemon
-npm start       # Start production server
+npm run dev              # Start local development server (test env)
+npm start                # Start production server
+```
+
+### Database Scripts
+```bash
+npm run db:setup         # Create database and run migrations
+npm run db:migrate       # Run pending migrations
+npm run db:migrate:undo  # Undo last migration
+npm run db:reset         # Drop, create, and migrate database
+npm run db:seed          # Run all seeders
+```
+
+### Environment Setup Scripts
+```bash
+npm run setup:dev        # Setup development environment
+npm run setup:prod       # Setup production environment  
+npm run setup:test       # Setup test environment (local)
+```
+
+### Deployment Scripts
+```bash
+npm run deploy:dev       # Deploy to development
+npm run deploy:prod      # Deploy to production
+./deploy.sh development  # Alternative deployment script
+./deploy.sh production   # Alternative deployment script
 ```
 
 ## 🤝 Contributing
